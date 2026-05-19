@@ -1,0 +1,50 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Mono:wght@400;500&display=swap");
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #f8f7f4;
+  --fg: #1a1916;
+  --fg-muted: #6b6a66;
+  --surface: #f0ede8;
+  --border: #e0ddd8;
+  --accent: #1a1916;
+  --accent-glow: rgba(26, 25, 22, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111110;
+    --fg: #f0ede8;
+    --fg-muted: #888785;
+    --surface: #1c1b19;
+    --border: #2c2b28;
+    --accent: #f0ede8;
+    --accent-glow: rgba(240, 237, 232, 0.08);
+  }
+}
+
+html {
+  font-family: "DM Mono", "Fira Mono", monospace;
+  background: var(--bg);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: var(--bg);
+}
+
+::selection {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
