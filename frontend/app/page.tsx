@@ -1,6 +1,5 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
-import Image from "next/image";
 import styles from "./page.module.css";
 
 type Stage = "idle" | "finetuning" | "creating" | "reviewing" | "done" | "error";
@@ -15,9 +14,9 @@ interface Result {
 
 const STAGE_LABELS: Record<Stage, string> = {
   idle: "",
-  finetuning: "Finetuner está optimizando el prompt...",
-  creating: "Creador está generando la imagen con DALL-E 3...",
-  reviewing: "Reviewer está evaluando el resultado...",
+  finetuning: "Optimizando el prompt...",
+  creating: "Generando imagen...",
+  reviewing: "Evaluando resultado...",
   done: "",
   error: "",
 };
@@ -31,9 +30,8 @@ export default function Home() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"\;
 
-  // Auto-resize textarea
   useEffect(() => {
     const el = textareaRef.current;
     if (!el) return;
@@ -41,7 +39,6 @@ export default function Home() {
     el.style.height = el.scrollHeight + "px";
   }, [prompt]);
 
-  // Simulate stage progression while waiting
   const simulateStages = () => {
     setStage("finetuning");
     timerRef.current = setTimeout(() => setStage("creating"), 8000);
@@ -88,14 +85,9 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <header className={styles.header}>
-        <span className={styles.tag}>multi-agent</span>
-        <h1 className={styles.title}>Image Crew</h1>
-        <p className={styles.subtitle}>
-          Tres agentes de IA colaboran para generar tu imagen perfecta
-        </p>
+        <h1 className={styles.title}>ImgBoost</h1>
       </header>
 
-      {/* Pipeline indicator */}
       <div className={styles.pipeline}>
         {(["finetuner", "creador", "reviewer"] as const).map((agent, i) => {
           const stageMap = { finetuner: "finetuning", creador: "creating", reviewer: "reviewing" };
@@ -115,7 +107,6 @@ export default function Home() {
         })}
       </div>
 
-      {/* Input area */}
       {(stage === "idle" || isLoading) && (
         <section className={styles.inputSection}>
           <div className={styles.inputWrapper}>
@@ -136,15 +127,10 @@ export default function Home() {
               onClick={handleGenerate}
               disabled={isLoading || !prompt.trim()}
             >
-              {isLoading ? (
-                <span className={styles.spinner} />
-              ) : (
-                "Generar →"
-              )}
+              {isLoading ? <span className={styles.spinner} /> : "Generar →"}
             </button>
           </div>
           <p className={styles.hint}>⌘ + Enter para generar</p>
-
           {isLoading && (
             <div className={styles.statusBar}>
               <span className={styles.statusDot} />
@@ -154,65 +140,43 @@ export default function Home() {
         </section>
       )}
 
-      {/* Result */}
       {stage === "done" && result && (
         <section className={styles.result}>
           <div className={styles.imageContainer}>
             {result.image_url ? (
-              <img
-                src={result.image_url}
-                alt="Imagen generada"
-                className={styles.generatedImage}
-              />
+              <img src={result.image_url} alt="Imagen generada" className={styles.generatedImage} />
             ) : (
               <div className={styles.noImage}>No se encontró URL de imagen</div>
             )}
             <div className={styles.imageBadge}>{result.score}</div>
           </div>
-
           <div className={styles.meta}>
             <p className={styles.originalPrompt}>
               <span className={styles.metaLabel}>Tu prompt</span>
               {prompt}
             </p>
-
-            <button
-              className={styles.reviewToggle}
-              onClick={() => setShowReview(!showReview)}
-            >
-              {showReview ? "Ocultar análisis del Reviewer ↑" : "Ver análisis del Reviewer ↓"}
+            <button className={styles.reviewToggle} onClick={() => setShowReview(!showReview)}>
+              {showReview ? "Ocultar análisis ↑" : "Ver análisis del Reviewer ↓"}
             </button>
-
             {showReview && (
               <div className={styles.review}>
                 <pre className={styles.reviewText}>{result.review}</pre>
               </div>
             )}
-
             <div className={styles.actions}>
-              <a
-                href={result.image_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.btnSecondary}
-              >
+              <a href={result.image_url} target="_blank" rel="noopener noreferrer" className={styles.btnSecondary}>
                 Abrir imagen ↗
               </a>
-              <button className={styles.btnPrimary} onClick={handleReset}>
-                Nueva imagen
-              </button>
+              <button className={styles.btnPrimary} onClick={handleReset}>Nueva imagen</button>
             </div>
           </div>
         </section>
       )}
 
-      {/* Error */}
       {stage === "error" && (
         <section className={styles.errorSection}>
           <p className={styles.errorText}>✗ {error}</p>
-          <button className={styles.btnPrimary} onClick={handleReset}>
-            Reintentar
-          </button>
+          <button className={styles.btnPrimary} onClick={handleReset}>Reintentar</button>
         </section>
       )}
     </main>
